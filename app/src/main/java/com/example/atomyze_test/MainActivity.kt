@@ -25,7 +25,9 @@ class MainActivity : MvpAppCompatActivity(), MainContract.View {
         (application as MainApplication).mainComponent.injectMain(this)
         super.onCreate(savedInstanceState)
 
-        binding = DataBindingUtil.setContentView(this, R.layout.main_activity)
+        binding = DataBindingUtil
+            .setContentView<MainActivityBinding>(this, R.layout.main_activity)
+            .apply { updateButton.setOnClickListener { presenter.updateCurrencies() } }
     }
 
     override fun showCurrencies(currencies: List<MainContract.Currency>) {

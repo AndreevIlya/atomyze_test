@@ -1,14 +1,13 @@
 package com.example.atomyze_test
 
-import android.util.Log
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
 class MainPresenter @Inject constructor(
-    private val repo: MainRepo
-): MainContract.Presenter() {
+    private val repo: MainRepo,
+) : MainContract.Presenter() {
 
     private lateinit var disposable: Disposable
 
@@ -16,6 +15,12 @@ class MainPresenter @Inject constructor(
 
     override fun onFirstViewAttach() {
         super.onFirstViewAttach()
+        load()
+    }
+
+    override fun updateCurrencies() = load()
+
+    private fun load() {
         state = State.LOADING
         viewState.showLoading()
         repo.getCurrencies()
@@ -27,14 +32,14 @@ class MainPresenter @Inject constructor(
                     state = State.LOADED
                     viewState.showCurrencies(it)
                 }
-            ){
+            ) {
                 state = State.FAILED
                 viewState.showError()
             }
-            .also{ disposable = it}
+            .also { disposable = it }
     }
 
-    private enum class State{
+    private enum class State {
         NOT_LOADED, LOADING, LOADED, FAILED
     }
 

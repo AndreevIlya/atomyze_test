@@ -15,7 +15,9 @@ interface MainContract {
         fun showError()
     }
 
-    abstract class Presenter : MvpPresenter<View>()
+    abstract class Presenter : MvpPresenter<View>() {
+        abstract fun updateCurrencies()
+    }
 
     data class Currency(
         val code: String,
