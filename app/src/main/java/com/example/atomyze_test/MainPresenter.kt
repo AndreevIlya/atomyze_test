@@ -39,6 +39,11 @@ class MainPresenter @Inject constructor(
             .also { disposable = it }
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+        disposable.dispose()
+    }
+
     private enum class State {
         NOT_LOADED, LOADING, LOADED, FAILED
     }
