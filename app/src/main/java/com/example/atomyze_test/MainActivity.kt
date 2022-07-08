@@ -5,6 +5,7 @@ import android.view.KeyEvent
 import android.view.View
 import android.view.inputmethod.InputMethodManager
 import androidx.databinding.DataBindingUtil
+import androidx.lifecycle.Observer
 import com.example.atomyze_test.databinding.MainActivityBinding
 import com.example.atomyze_test.ui.CurrenciesAdapter
 import com.google.android.material.snackbar.BaseTransientBottomBar.LENGTH_SHORT
@@ -43,6 +44,9 @@ class MainActivity : MvpAppCompatActivity(), MainContract.View {
                     return@setOnKeyListener false
                 }
             }
+
+        val needsUpdateObserver = Observer<Boolean> { presenter.updateCurrencies() }
+        presenter.needsUpdateLiveData.observe(this, needsUpdateObserver)
     }
 
     override fun showCurrencies(currencies: List<MainContract.Currency>) {
