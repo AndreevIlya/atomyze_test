@@ -19,6 +19,8 @@ class MainActivity : MvpAppCompatActivity(), MainContract.View {
 
     private val presenter by moxyPresenter { presenterProvider.get() }
 
+    private val adapter = CurrenciesAdapter()
+
     private lateinit var binding: MainActivityBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -27,14 +29,20 @@ class MainActivity : MvpAppCompatActivity(), MainContract.View {
 
         binding = DataBindingUtil
             .setContentView<MainActivityBinding>(this, R.layout.main_activity)
-            .apply { updateButton.setOnClickListener { presenter.updateCurrencies() } }
+            .apply {
+                updateButton.setOnClickListener { presenter.updateCurrencies() }
+                exchangeButton.setOnClickListener {
+                    val value = exchange.text.toString()
+                    adapter.exchangeValue = if (value.isEmpty()) null else value.toFloat()
+                }
+            }
     }
 
     override fun showCurrencies(currencies: List<MainContract.Currency>) {
         binding.run {
             updateButton.visibility = View.VISIBLE
             loading.visibility = View.GONE
-            this.currencies.adapter = CurrenciesAdapter().apply { this.currencies = currencies }
+            this.currencies.adapter = adapter.apply { this.currencies = currencies }
         }
     }
 
