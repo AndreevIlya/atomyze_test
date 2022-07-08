@@ -1,7 +1,9 @@
 package com.example.atomyze_test
 
 import android.os.Bundle
+import android.view.KeyEvent
 import android.view.View
+import android.view.inputmethod.InputMethodManager
 import androidx.databinding.DataBindingUtil
 import com.example.atomyze_test.databinding.MainActivityBinding
 import com.example.atomyze_test.ui.CurrenciesAdapter
@@ -31,9 +33,14 @@ class MainActivity : MvpAppCompatActivity(), MainContract.View {
             .setContentView<MainActivityBinding>(this, R.layout.main_activity)
             .apply {
                 updateButton.setOnClickListener { presenter.updateCurrencies() }
-                exchangeButton.setOnClickListener {
-                    val value = exchange.text.toString()
-                    adapter.exchangeValue = if (value.isEmpty()) null else value.toFloat()
+                exchangeButton.setOnClickListener { handleExchangeEnterClicked() }
+                exchange.setOnKeyListener { _, keyCode, _ ->
+                    if (keyCode == KeyEvent.KEYCODE_ENTER) {
+                        handleExchangeEnterClicked()
+                        (getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager)
+                            .hideSoftInputFromWindow(exchange.windowToken, 0)
+                    }
+                    return@setOnKeyListener false
                 }
             }
     }
@@ -55,5 +62,10 @@ class MainActivity : MvpAppCompatActivity(), MainContract.View {
 
     override fun showError() {
         Snackbar.make(binding.root, getString(R.string.error_message), LENGTH_SHORT).show()
+    }
+
+    private fun MainActivityBinding.handleExchangeEnterClicked() {
+        val value = exchange.text.toString()
+        adapter.exchangeValue = if (value.isEmpty()) null else value.toFloat()
     }
 }
